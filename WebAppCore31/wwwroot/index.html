@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Registration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" 
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+    crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex">
+            <a class="navbar-brand" href="#">Course Registration</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-md-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            Home 
+                            <span class="sr-only">
+                                (current)
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <form class="form-inline my-2 my-lg-0 mr-auto">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </form>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-success mr-2" data-toggle="modal" data-target="#publish">Publish</button>
+                <a class="btn btn-outline-primary" href="#" data-toggle="modal" data-target="#exampleModal">Login</a>
+            </div>  
+        </nav>
+        <hr>
+        <!-- End Header -->
+
+        <!-- Main DOM -->
+        <div id="root"></div>
+        <div class="modal fade" id="publish" tabindex="-1" role="dialog" aria-labelledby="publishLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="publishLabel">Publish your new course</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id = "card-add-course">
+                            <div class="form-group">
+                                <label for="new-title">Course's Title</label>
+                                <input id="new-title" class="form-control" type="text" placeholder="New Title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="new-subject">Subject</label>
+                                <input id="new-subject" class="form-control" type="text" placeholder="Subject name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="content-course">Course's content</label>
+                                <textarea class="form-control" id="content-course" rows="6" placeholder="Content goes here" required></textarea>
+                            </div>
+                            
+                            <button onclick="AddNewCourse()" type="submit" class='btn btn-outline-success'>Publish </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="editModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModal">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Title</label>
+                                <input type="text" class="form-control" id="edited-title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edited-subject">Subject</label>
+                                <input type="text" class="form-control" id="edited-subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="content-course">Course's content</label>
+                                <textarea class="form-control" id="edited-content" rows="6" required></textarea>
+                            </div>
+                            
+                            <button id="submit-edit" type="submit" class="btn btn-secondary">Submit edit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Main -->
+
+        <!--Footer-->
+        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+            <div class="row justify-content-between">
+                <div class="col-4">
+                    <small class="d-block mb-3 text-muted">ООО Boring Company</small>
+                    <small class="d-block mb-3 text-muted">&copy; 2010-2020</small>
+                </div>
+                <div class="col-2">
+                    <h5>About</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Team</a></li>
+                        <li><a class="text-muted" href="#">Locations</a></li>
+                        <li><a class="text-muted" href="#">Privacy</a></li>
+                        <li><a class="text-muted" href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+        <!--End Footer-->
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="email">Email address</label>
+                                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" 
+                                placeholder="Enter Email here">
+                                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.(JK)</small> -->
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password here">
+                            </div>
+                            <div class="collapse formRegis mb-3">
+                                <label for="confirmpassword">Confirmed Password</label>
+                                <input type="password" class="form-control" id="confirmpassword" placeholder="Confirmed Password">
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" class="custom-control-input" id="checkboxRemember">
+                                  <label class="custom-control-label" for="checkboxRemember">Remember me</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" class="custom-control-input" 
+                                    id="checkboxRegister" data-toggle="collapse" onclick="CheckboxRegisterClicked()"
+                                    data-target=".formRegis" checked>
+                                  <label class="custom-control-label" for="checkboxRegister">I have an account</label>
+                                </div>
+                                
+                                <div class="collapse formRegis mb-3">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="radioStudent" name="radio-stacked" required>
+                                        <label class="custom-control-label" for="radioStudent">Register as student</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="radioAuthor" name="radio-stacked" required>
+                                        <label class="custom-control-label" for="radioAuthor">Register as author (professor)</label>
+                                        <div class="invalid-feedback">Please choose one!</div>
+                                    </div>
+                                </div>
+                                    
+                            </div>
+                            <button type="submit" id="btn-login-register" class="btn btn-primary" onclick="Login()">Login</button>
+                            <script>
+                                function CheckboxRegisterClicked()
+                                {
+                                    var btn = document.getElementById("btn-login-register");
+                                    var chkbox = document.getElementById("checkboxRegister");
+                                    if(chkbox.checked == false)
+                                    {
+                                        btn.setAttribute("class", "btn btn-success");
+                                        btn.textContent = "Register";
+                                        btn.onclick = (event) =>{
+                                            Register();
+                                        }
+                                    }
+                                    else{
+                                        btn.setAttribute("class", "btn btn-primary");
+                                        btn.textContent = "Login";
+                                        btn.onclick = (event) => {
+                                            Login();
+                                        }
+                                    }
+                                }
+                            </script>
+                        </form>
+                    </div>
+                    <!--<div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <!--End Modal-->
+    </div>
+    <script src="/JS/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
