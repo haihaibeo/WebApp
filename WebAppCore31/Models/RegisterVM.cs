@@ -21,6 +21,10 @@ namespace WebAppCore31
         [Required]
         public string Role { get; set; }
 
+        [Required]
+        [Display(Name = "Remember")]
+        public bool RememberMe { get; set; }
+
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

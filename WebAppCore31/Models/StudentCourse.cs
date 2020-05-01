@@ -15,7 +15,7 @@ namespace WebAppCore31
 
         public string StudentId { get; set; }
 
-        public int CourseId { get; set; }
+        public string CourseId { get; set; }
 
         [ForeignKey(nameof(CourseId))]
         public virtual Course Course { get; set; }

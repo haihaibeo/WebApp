@@ -1,4 +1,4 @@
-﻿const uri = "/api/course/";
+﻿const uri = "/api";
 var app = document.getElementById("root");
 
 function setCard(element)
@@ -151,10 +151,9 @@ function AddNewCourse()
     xhr.open("POST", uri, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({
-        "subject" : subject,
-        "title" : title,
-        "info" : info,
-        "authorID" : 2
+        "Subject" : subject,
+        "Title" : title,
+        "ContentCourse" : info
     }));
 
     location.reload();

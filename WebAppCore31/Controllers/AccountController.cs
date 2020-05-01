@@ -31,32 +31,30 @@ namespace WebAppCore31.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User()
+                User user;
+                if (reg.Role == "Student")
+                    user = new Student();
+                else if (reg.Role == "Author")
+                    user = new Author();
+                else
                 {
-                    Name = reg.FullName,
-                    Email = reg.Email,
-                    DateOfBirth = reg.DateOfBirth,
-                    UserName = reg.Email
-                };
+                    var msgg = new
+                    {
+                        message = "Unsuccessfully register !",
+                        error = "Invalid role !"
+                    };
+                    return Ok(msgg);
+                }
+                user.Name = reg.FullName;
+                user.Email = reg.Email;
+                user.DateOfBirth = reg.DateOfBirth;
+                user.UserName = reg.Email;
 
                 var result = await _userManager.CreateAsync(user, reg.Password);
                 if (result.Succeeded)
                 {
-                    if(reg.Role == "Student")
-                        user = new Student();
-                    else if(reg.Role == "Author")
-                        user = new Author();
-                    else
-                    {
-                        var msgg = new
-                        {
-                            message = "Unsuccessfully register !",
-                            error = "Invalid role !"
-                        };
-                        return Ok(msgg);
-                    }
-                    await _userManager.AddToRoleAsync(user, reg.Role);
-                    await _signInManager.SignInAsync(user, false);
+                    var resultRole = await _userManager.AddToRoleAsync(user, reg.Role);
+                    await _signInManager.SignInAsync(user, reg.RememberMe);
                     var msg = new
                     {
                         message = $"User {reg.FullName} registered!"
