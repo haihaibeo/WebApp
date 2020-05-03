@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace WebAppCore31
 {
@@ -36,7 +37,8 @@ namespace WebAppCore31
                 .AddDefaultTokenProviders();
 
             // Add controller to the 
-            services.AddMvc();
+            services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "SimpleWebApp";

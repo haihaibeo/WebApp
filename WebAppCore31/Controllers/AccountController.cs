@@ -137,5 +137,30 @@ namespace WebAppCore31.Controllers
             };
             return Ok(msg);
         }
+
+        [HttpGet]
+        [Route("Account/IsAuthenticated")]
+        public async Task<IActionResult> GetCurrentUserRoleAsync()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+            {
+                var msg = new
+                {
+                    role = "",
+                    error = "User is not logged in!"
+                };
+                return Ok(msg);
+            }
+            else
+            {
+                var msg = new
+                {
+                    role = await _userManager.GetRolesAsync(user),
+                    error = ""
+                };
+                return Ok(msg);
+            }
+        }
     }
 }

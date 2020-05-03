@@ -16,6 +16,7 @@ namespace WebAppCore31
         public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<StudentCourse> StudentCourses { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

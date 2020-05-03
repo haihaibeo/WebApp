@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class StudentCourse
+    public class Comment
     {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        [Required]
+        public string CommentString { get; set; }
+
+        [Required]
         public string StudentId { get; set; }
 
+        [Required]
         public string CourseId { get; set; }
 
         [ForeignKey(nameof(CourseId))]
