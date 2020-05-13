@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebAppCore31.Migrations
 {
-    public partial class init1 : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -184,7 +184,8 @@ namespace WebAppCore31.Migrations
                     Id = table.Column<string>(nullable: false),
                     CommentString = table.Column<string>(nullable: false),
                     StudentId = table.Column<string>(nullable: false),
-                    CourseId = table.Column<string>(nullable: false)
+                    CourseId = table.Column<string>(nullable: false),
+                    DateTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

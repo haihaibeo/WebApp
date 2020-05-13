@@ -13,10 +13,12 @@ namespace WebAppCore31
             Subject = course.Subject;
             Title = course.Title;
             ContentCourse = course.ContentCourse;
+            AuthorId = course.AuthorId;
         }
         public string Id { get; set; }
         public string Subject { get; set; }
         public string Title { get; set; }
         public string ContentCourse { get; set; }
+        public string AuthorId { get; set; }
     }
 }

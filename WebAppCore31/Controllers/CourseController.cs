@@ -31,14 +31,31 @@ namespace WebAppCore31.Controllers
 
         //[Route("course/{id}")]
         [HttpGet("{courseId}")]
-        public async Task<IActionResult> GetCourse([FromRoute]string courseId)
+        public async Task<IActionResult> GetCourseById([FromRoute]string courseId)
         {
             if (ModelState.IsValid == false)
-            {
                 return BadRequest(ModelState);
-            }
+
             var result = await _context.Courses.SingleOrDefaultAsync(c => c.Id == courseId);
-            return Ok(result);
+            CourseModel course = new CourseModel(result);
+            return Ok(course);
+        }
+
+        [HttpGet("/Account/{accId}")]
+        public async Task<IActionResult> GetAllCourseByAuthorId([FromRoute] string accId)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest();
+
+            var user = await _userManager.FindByIdAsync(accId);
+            var courses = new List<Course>();
+            foreach (var item in _context.Courses)
+            {
+                if (item.AuthorId == accId)
+                    courses.Add(item);
+            }
+
+            return Ok(courses);
         }
 
         [HttpDelete("{courseId}")]
@@ -71,7 +88,7 @@ namespace WebAppCore31.Controllers
                 if (user != null)
                 {
                     course.AuthorId = user.Id;
-                    _context.Courses.Add(course);
+                    await _context.Courses.AddAsync(course);
                     await _context.SaveChangesAsync();
                 }
                 return Ok();
@@ -106,6 +123,33 @@ namespace WebAppCore31.Controllers
             await _context.StudentCourses.AddAsync(studcourse);
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpGet("IsSubscribed/{courseId}")]
+        [Authorize(Roles ="Student")]
+        public async Task<IActionResult> IsSubscribed([FromRoute]string courseId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var course = await _context.Courses.FindAsync(courseId);
+            if(course != null)
+            {
+                var studCourse = await _context.StudentCourses.SingleOrDefaultAsync(sc => sc.StudentId == user.Id && sc.CourseId == course.Id);
+                if(studCourse != null)
+                {
+                    var msg = new ReturnMessage(true, null);
+                    return Ok(msg);
+                }
+                else
+                {
+                    var msg = new ReturnMessage(false, null);
+                    return Ok(msg);
+                }
+            }
+            else
+            {
+                var msg = new ReturnMessage(null, "Course not existed");
+                return Ok(msg);
+            }
         }
     }
 }

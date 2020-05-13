@@ -8,12 +8,13 @@
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
     crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/CSS/course.css"/>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- #region Header -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex">
-            <a class="navbar-brand" href="#">Course Registration</a>
+            <a class="navbar-brand" href="/index.html">Course Registration</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -21,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-md-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="/index.html">
                             Home 
                             <span class="sr-only">
                                 (current)
@@ -36,15 +37,83 @@
                     </li>
                 </ul>
                 <button class="btn btn-outline-success mr-2" data-toggle="modal" data-target="#publish">Publish</button>
-                <a class="btn btn-outline-primary" href="#" data-toggle="modal" data-target="#exampleModal">Login</a>
+                <button id="btnLog"></button>
             </div>  
         </nav>
         <hr>
-        <!-- End Header -->
+        <!-- #endregion -->
 
-        <!-- Main DOM -->
-        <div id="root">
+        <!-- #region Main -->
+        <div id="root"></div>
+
+        <hr>
+
+        <!-- #region Comment Section -->
+        <div class="col-md-12 col-sm-12">
+                <div class="comment-wrapper">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            CommentSection
+                        </div>
+                        <div class="panel-body">
+                            <textarea id="text-comment" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
+                            <br>
+                            <button type="button" class="btn btn-info float-right">Post</button>
+                            <div class="clearfix"></div>
+                            <hr>
+                            <ul class="media-list" id="ulComment">
+                                <li class="media">
+                                    <a href="#" class="float-left">
+                                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <span class="text-muted float-right">
+                                            <small class="text-muted">30 min ago</small>
+                                        </span>
+                                        <strong class="text-success">@MartinoMont</strong>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                            Lorem ipsum dolor sit amet, <a href="#">#consecteturadipiscing </a>.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="media">
+                                    <a href="#" class="float-left">
+                                        <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <span class="text-muted float-right">
+                                            <small class="text-muted">30 min ago</small>
+                                        </span>
+                                        <strong class="text-success">@LaurenceCorreil</strong>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                            Lorem ipsum dolor <a href="#">#ipsumdolor </a>adipiscing elit.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="media">
+                                    <a href="#" class="float-left">
+                                        <img src="https://bootdey.com/img/Content/user_3.jpg" alt="" class="img-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <span class="text-muted float-right">
+                                            <small class="text-muted">30 min ago</small>
+                                        </span>
+                                        <strong class="text-success">@JohnNida</strong>
+                                        <p>
+                                            Lorem ipsum dolor <a href="#">#sitamet</a> sit amet, consectetur adipiscing elit.
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        
         </div>
+        <!-- #endregion -->
+        
         <div class="modal fade" id="publish" tabindex="-1" role="dialog" aria-labelledby="publishLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -109,9 +178,9 @@
                 </div>
             </div>
         </div>
-        <!-- End Main -->
+        <!-- #endregion -->
 
-        <!--Footer-->
+        <!-- #region Footer -->
         <footer class="pt-4 my-md-5 pt-md-5 border-top">
             <div class="row justify-content-between">
                 <div class="col-4">
@@ -129,9 +198,9 @@
                 </div>
             </div>
         </footer>
-        <!--End Footer-->
+        <!-- #endregion -->
 
-        <!-- Modal -->
+        <!-- #region Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -215,7 +284,7 @@
                 </div>
             </div>
         </div>
-        <!--End Modal-->
+        <!-- #endregion -->
     </div>
     <script src="/JS/course.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

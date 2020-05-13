@@ -7,12 +7,12 @@ namespace WebAppCore31
 {
     public struct ReturnMessage
     {
-        public ReturnMessage(string msg, string error)
+        public ReturnMessage(object msg, object error)
         {
             Message = msg;
             Error = error;
         }
-        public string Message { get; set; }
-        public string Error { get; set; }
+        public object Message { get; set; }
+        public object Error { get; set; }
     }
 }

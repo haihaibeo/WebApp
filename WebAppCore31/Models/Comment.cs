@@ -21,6 +21,9 @@ namespace WebAppCore31
         [Required]
         public string CourseId { get; set; }
 
+        [Required]
+        public DateTime DateTime { get; set; }
+
         [ForeignKey(nameof(CourseId))]
         public virtual Course Course { get; set; }
 

@@ -1,17 +1,5 @@
 ﻿const uri = "/course/";
-var app = document.getElementById("root");
-
-function setCard(element)
-{
-    element.style.padding = "10px";
-    element.style.marginBottom = "10px";
-    element.style.background = "white";
-    element.style.boxShadow = "2px 4px 25px rgba(0,0,0,0.1)";
-    element.style.borderRadius = "8px";
-    element.style.overflow = "hidden";
-
-    return element;
-}
+// import * as res from "/JS/resource.js";
 
 function DisplayCourse(course, DomApp)
 {
@@ -22,55 +10,61 @@ function DisplayCourse(course, DomApp)
     DomApp.appendChild(container);
 
     let card = document.createElement("div");
-    card = setCard(card);
-
+    card.style.padding = "10px";
+    card.style.marginBottom = "20px";
+    card.style.background = "white";
+    card.style.boxShadow = "5px 5px 20px rgba(0,0,0,0.2)";
+    card.style.borderRadius = "8px";
+    card.style.overflow = "hidden";
+    
     const editDiv = document.createElement("div");
     editDiv.setAttribute("class", "d-flex flex-column flex-md-row align-items-center bg-white");
 
-    const editbtn = document.createElement("button");
-    editbtn.setAttribute("class", "btn btn-outline-secondary d-flex mr-2 author");
-    editbtn.setAttribute("data-toggle", "modal");
-    editbtn.setAttribute("data-target", "#modal-edit");
-    editbtn.textContent = "Edit";
-    editbtn.onclick = (event) =>
-    {
-        ModalEdit(course.id, course.title, course.subject, course.contentCourse, course.authorID);
-    };
+    //#region buttons
+    // const editbtn = document.createElement("button");
+    // editbtn.setAttribute("class", "btn btn-outline-secondary d-flex mr-2 author");
+    // editbtn.setAttribute("data-toggle", "modal");
+    // editbtn.setAttribute("data-target", "#modal-edit");
+    // editbtn.textContent = "Edit";
+    // editbtn.onclick = (event) =>
+    // {
+    //     ModalEdit(course.id, course.title, course.subject, course.contentCourse, course.authorID);
+    // };
     
-    delbtn = document.createElement("button");
-    delbtn.setAttribute("class", " btn btn-outline-danger d-flex mr-2 author");
-    delbtn.textContent = "Delete";
-    delbtn.style.margin = "2";
-    delbtn.onclick = (event) =>
-    {
-        var cnfm = confirm("Confirm delete?");
-        if(cnfm == true)
-        {
-            DeleteCourse(course.id);
-            alert("Course deleted!");
-        }
-        else console.log("Canceled");
-    };  
+    // const delbtn = document.createElement("button");
+    // delbtn.setAttribute("class", " btn btn-outline-danger d-flex mr-2 author");
+    // delbtn.textContent = "Delete";
+    // delbtn.style.margin = "2";
+    // delbtn.onclick = (event) =>
+    // {
+    //     var cnfm = confirm("Confirm delete?");
+    //     if(cnfm == true)
+    //     {
+    //         DeleteCourse(course.id);
+    //         alert("Course deleted!");
+    //     }
+    //     else console.log("Canceled");
+    // };  
 
-    const subscribebtn = document.createElement("button");
-    subscribebtn.setAttribute("class", " btn btn-outline-primary d-flex justify-content-end student");
-    subscribebtn.textContent = "Subscribe";
-    subscribebtn.style.margin = "2";
-    subscribebtn.onclick = (event) =>{
-        var cnfm = confirm("Subscribe?");
-        if(cnfm == true)
-        {
-            SubscribeCourse(course.id);
-        }
-    }
-
+    // const subscribebtn = document.createElement("button");
+    // subscribebtn.setAttribute("class", " btn btn-outline-primary d-flex justify-content-end student");
+    // subscribebtn.textContent = "Subscribe";
+    // subscribebtn.style.margin = "2";
+    // subscribebtn.onclick = (event) =>{
+    //     var cnfm = confirm("Subscribe?");
+    //     if(cnfm == true)
+    //     {
+    //         SubscribeCourse(course.id);
+    //     }
+    // }
+    //#endregion
+    
     const title_h2 = document.createElement("h2");
     title_h2.setAttribute("class", "mb-0 mr-md-auto");
     title_h2.textContent = course.title;
     title_h2.style.cursor = "pointer";
     title_h2.onclick = (event) => {
-        alert("Go to courseId = "+ course.id);
-        GetToThisCourse(course.id);
+        window.location.href = "/course.html#" + course.id;
     }
 
     const subject_h5 = document.createElement("h5");
@@ -90,18 +84,15 @@ function DisplayCourse(course, DomApp)
 
     card.appendChild(editDiv);
     editDiv.appendChild(title_h2);
-    editDiv.appendChild(editbtn);
-    editDiv.appendChild(delbtn);
-    editDiv.appendChild(subscribebtn);
     card.appendChild(subject_h5);
     card.appendChild(document.createElement("hr"));
     card.appendChild(content_p);
     container.appendChild(card);
 }
-
 // Refactoring : take DOM out and make it a new function
 void function DisplayAllCourses()
 {
+    var DomApp = document.getElementById("root");
     let xhr = new XMLHttpRequest();
     xhr.open("GET", uri, true); // true : asynchronous, false : deprecated
     
@@ -113,7 +104,7 @@ void function DisplayAllCourses()
             if(xhr.status === 200)
             {
                 data.forEach(course => {
-                    DisplayCourse(course, app);
+                    DisplayCourse(course, DomApp);
                });
             }
            else console.log("error!");
@@ -191,80 +182,42 @@ function SubscribeCourse(id)
     console.log("Course with id = ", id, " deleted!");
 }
 
-function SetLogBtn()
+function SetLogBtn(role)
 {
     let btnLog = document.getElementById("btnLog");
-    btnLog.setAttribute("class", "btn btn-outline-secondary");
-    btnLog.setAttribute("data-target", "#");
-    btnLog.textContent = "Log out";
-    btnLog.onclick = () => {
-        Logout();
-        location.reload();
+    if(role != ""){
+        btnLog.setAttribute("class", "btn btn-outline-secondary");
+        btnLog.setAttribute("data-target", "#");
+        btnLog.textContent = "Log out";
+        btnLog.onclick = () => {
+            Logout();
+            location.reload();
+        }
+    }
+    else{
+        btnLog.setAttribute("class", "btn btn-outline-primary");
+        btnLog.setAttribute("data-toggle", "modal")
+        btnLog.setAttribute("data-target", "#exampleModal");
+        btnLog.textContent = "Log in";
     }
 }
 
-void function IsUserAuthenticated()
+IsUserAuthenticated(SetLogBtn);
+
+function IsUserAuthenticated(callback)
 {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "Account/IsAuthenticated", true);
     xhr.onload = function(){
         let msg = JSON.parse(this.responseText);
-        if(msg.error == ""){
-            if(msg.role.length == 1)
-            {
-                ChangeUIRole(msg.role[0]);
-            }
+        if(msg.error == "" && msg.role.length == 1){
+            callback(msg.role[0]);
         }
         else {
-            console.log(msg.error);
-            ChangeUIGuest();
+            callback("");
         }
     }
     xhr.send();
-}();
-
-function ChangeUIRole(role)
-{
-    SetLogBtn();
-    switch (role) {
-        case "Author":
-            console.log(role);
-            ChangeUIAuthor();
-            break;
-        case "Student":
-            console.log(role);
-            ChangeUIStudent();
-            break;
-        default:
-            break;
-    }
-}
-
-function ChangeUIGuest()
-{
-    let btnAuthor = document.querySelectorAll(".author");
-    let btnStudent = document.querySelectorAll(".student");
-    console.log("foooo");
-    btnAuthor.forEach(btn => {
-        btn.parentElement.removeChild(btn);
-    });
-    
-    btnStudent.forEach(btn => {
-        btn.parentElement.removeChild(btn);
-    });
-}
-
-function ChangeUIAuthor()
-{
-
-}
-
-function ChangeUIStudent()
-{
-    let btnAuthorEdit = document.querySelectorAll(".author");
-    btnAuthorEdit.forEach(btn => {
-        btn.parentElement.removeChild(btn);
-    });
 }
 
 function Login()
@@ -272,6 +225,7 @@ function Login()
     let login = document.getElementById("email").value;
     let password = document.getElementById("password").value;
     let rememberMe = document.getElementById("checkboxRemember");
+    
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/Account/Login");
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -281,17 +235,25 @@ function Login()
             let msg = JSON.parse(xhr.responseText);
             if(typeof msg.error !== "undefined"){
                 console.log(msg.error);
+                let errorDiv = document.getElementById("errorDisplayDiv");
+                errorDiv.innerHTML = "";
+                msg.error.forEach(er => {
+                    let erDiv = document.createElement("div");
+                    erDiv.setAttribute("class", "form-group text-danger");
+                    erDiv.textContent = er;
+                    errorDiv.appendChild(erDiv);
+                })
             }
             else{
+                alert(msg.message);
                 location.reload();
-                SetLogBtn();
             }
         }
     }
     xhr.send(JSON.stringify({
         "Email": login,
         "Password": password,
-        "RememberMe": rememberMe.checked
+        "RememberMe": rememberMe.checked,
     }));
 }
 
@@ -309,5 +271,44 @@ function Logout()
 
 function Register()
 {
-    alert("registerr");
+    let name = document.getElementById("name").value;
+    let login = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    let cnfPassword = document.getElementById("confirmpassword").value;
+    let rememberMe = document.getElementById("checkboxRemember").checked;
+    var role = document.querySelector('input[name="radio-stacked"]:checked').value;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/Account/Register", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function()
+    {
+        if(xhr.responseText !== "")
+        {
+            let msg = JSON.parse(this.responseText)
+            if(typeof msg.error !== "undefined")
+            {
+                let errorDiv = document.getElementById("errorDisplayDiv");
+                errorDiv.innerHTML = "";
+                msg.error.forEach(er => {
+                    let erDiv = document.createElement("div");
+                    erDiv.setAttribute("class", "form-group text-danger");
+                    erDiv.textContent = er;
+                    errorDiv.appendChild(erDiv);
+                })
+            }
+            else{
+                alert(msg.message);
+                location.reload();
+            }
+        }
+    }
+    xhr.send(JSON.stringify({
+        "FullName": name,
+        "Email": login,
+        "Password": password,
+        "ConfirmPassword": cnfPassword,
+        "RememberMe": rememberMe,
+        "Role" : role
+    }));
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace WebAppCore31.Controllers
 {
@@ -40,8 +41,8 @@ namespace WebAppCore31.Controllers
                 {
                     var msgg = new
                     {
-                        message = "Unsuccessfully register !",
-                        error = "Invalid role !"
+                        message = "Unsuccessfully register!",
+                        error = "Invalid role!"
                     };
                     return Ok(msgg);
                 }
@@ -88,14 +89,14 @@ namespace WebAppCore31.Controllers
         }
 
         [HttpPost]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [Route("Account/Login")]
         public async Task<IActionResult> Login([FromBody]LoginVM login)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent: login.RememberMe, lockoutOnFailure: false);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     var msg = new
                     {
@@ -139,6 +140,7 @@ namespace WebAppCore31.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("Account/IsAuthenticated")]
         public async Task<IActionResult> GetCurrentUserRoleAsync()
         {
@@ -161,6 +163,45 @@ namespace WebAppCore31.Controllers
                 };
                 return Ok(msg);
             }
+        }
+
+        //[HttpGet]
+        //[AllowAnonymous]
+        //[Route("Account/GetUserCourse")]
+        //public async Task<IActionResult> GetUserByCourseId(string courseId)
+        //{
+            
+        //}
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("Account/GetUser")]
+        public async Task<IActionResult> GetUserById(string userId)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+                return Ok(user);
+            else
+            {
+                var msg = new
+                {
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+                };
+                return Ok(msg);
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("Account/{userId}")]
+        public async Task<IActionResult> GetUserByFromRouteId([FromRoute]string userId)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest();
+            var result = await GetUserById(userId);
+            return Ok(result);
         }
     }
 }
