@@ -36,8 +36,8 @@
                         </form>
                     </li>
                 </ul>
-                <button class="btn btn-outline-success mr-2" data-toggle="modal" data-target="#publish">Publish</button>
-                <button id="btnLog"></button>
+                <div id="btnPublish"></div>
+                <div id="btnLog"></div>
             </div>  
         </nav>
         <hr>
@@ -52,15 +52,18 @@
         <div class="col-md-12 col-sm-12">
                 <div class="comment-wrapper">
                     <div class="panel panel-info">
-                        <div class="panel-heading">
-                            CommentSection
+                        <div class="panel-body clearfix">
+                            <form>
+                                <textarea id="text-comment" class="form-control" placeholder="Write a comment..." rows="3" required></textarea>
+                                <div id="error-div-comment"></div>
+                                <br>
+                                <button type="submit" class="btn btn-info float-right" onclick="PostComment()">Post</button>
+                            </form>
                         </div>
-                        <div class="panel-body">
-                            <textarea id="text-comment" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
-                            <br>
-                            <button type="button" class="btn btn-info float-right">Post</button>
+                        <hr>
+
+                        <div class="panel-body overflow-auto clearfix">
                             <div class="clearfix"></div>
-                            <hr>
                             <ul class="media-list" id="ulComment">
                                 <li class="media">
                                     <a href="#" class="float-left">
@@ -201,59 +204,76 @@
         <!-- #endregion -->
 
         <!-- #region Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="cell" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
                         <form>
-                            <div class="form-group">
-                                <label for="email">Email address</label>
-                                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" 
+                            <div class="form-group collapse multi-collapse formRegis">
+                                <label for="name">Full Name</label>
+                                <input type="text" required class="form-control" id="name"
                                 placeholder="Enter Email here">
                                 <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.(JK)</small> -->
                             </div>
+
+                            <div class="form-group">
+                                <label for="email">Email address</label>
+                                <input type="email" required class="form-control" id="email" aria-describedby="emailHelp" 
+                                placeholder="Enter Email here">
+                                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.(JK)</small> -->
+                            </div>
+
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="Enter Password here">
+                                <input type="password" required class="form-control" id="password" placeholder="Enter Password here">
                             </div>
-                            <div class="collapse formRegis mb-3">
+
+                            <div class="collapse multi-collapse formRegis mb-3" id="clps1">
                                 <label for="confirmpassword">Confirmed Password</label>
                                 <input type="password" class="form-control" id="confirmpassword" placeholder="Confirmed Password">
                             </div>
+
+                            <div id="errorDisplayDiv"></div>
+
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
                                   <input type="checkbox" class="custom-control-input" id="checkboxRemember">
                                   <label class="custom-control-label" for="checkboxRemember">Remember me</label>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
                                   <input type="checkbox" class="custom-control-input" 
                                     id="checkboxRegister" data-toggle="collapse" onclick="CheckboxRegisterClicked()"
-                                    data-target=".formRegis" checked>
+                                    data-target=".multi-collapse" aria-expanded="false" aria-controls="clps1 clsp2" checked>
                                   <label class="custom-control-label" for="checkboxRegister">I have an account</label>
                                 </div>
                                 
-                                <div class="collapse formRegis mb-3">
+                                <div class="collapse multi-collapse formRegis mb-3" id="clsp2">
                                     <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" id="radioStudent" name="radio-stacked" required>
+                                        <input type="radio" class="custom-control-input" value="Student" id="radioStudent" name="radio-stacked" checked required>
                                         <label class="custom-control-label" for="radioStudent">Register as student</label>
                                     </div>
+
                                     <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" id="radioAuthor" name="radio-stacked" required>
+                                        <input type="radio" class="custom-control-input" value="Author" id="radioAuthor" name="radio-stacked" required>
                                         <label class="custom-control-label" for="radioAuthor">Register as author (professor)</label>
                                         <div class="invalid-feedback">Please choose one!</div>
                                     </div>
                                 </div>
-                                    
                             </div>
-                            <button type="submit" id="btn-login-register" class="btn btn-primary" onclick="Login()">Login</button>
+
+                            <button type="button" id="btn-login-register" class="btn btn-primary" onclick="Login();">Login</button>
+
                             <script>
                                 function CheckboxRegisterClicked()
                                 {

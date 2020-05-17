@@ -20,9 +20,6 @@ namespace WebAppCore31
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
-
-            //ToDo
-        }
+            base.OnModelCreating(builder);        }
     }
 }

@@ -10,7 +10,7 @@ using WebAppCore31;
 namespace WebAppCore31.Migrations
 {
     [DbContext(typeof(RegisterContext))]
-    [Migration("20200507170843_init")]
+    [Migration("20200514222647_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -376,13 +376,13 @@ namespace WebAppCore31.Migrations
             modelBuilder.Entity("WebAppCore31.Comment", b =>
                 {
                     b.HasOne("WebAppCore31.Course", "Course")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebAppCore31.Student", "Student")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

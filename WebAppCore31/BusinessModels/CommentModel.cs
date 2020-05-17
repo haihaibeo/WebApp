@@ -10,7 +10,7 @@ namespace WebAppCore31
         public CommentModel(Comment comment)
         {
             Id = comment.Id;
-            StudentId = comment.StudentId;
+            StudentId = comment.UserId;
             CourseId = comment.CourseId;
             DateTime = comment.DateTime.ToShortDateString();
             CommentString = comment.CommentString;

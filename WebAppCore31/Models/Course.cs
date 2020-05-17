@@ -12,6 +12,11 @@ namespace WebAppCore31
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        public Course()
+        {
+            Comments = new HashSet<Comment>();
+        }
+
         [StringLength(50)]
         public string Subject { get; set; }
 
@@ -25,5 +30,7 @@ namespace WebAppCore31
 
         [ForeignKey(nameof(AuthorId))]
         public Author Author { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

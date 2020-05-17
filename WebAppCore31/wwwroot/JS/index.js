@@ -1,8 +1,11 @@
-﻿const uri = "/course/";
-// import * as res from "/JS/resource.js";
+﻿//import * as module from "/JS/resource.js";
+const uri = "/course/";
 
-function DisplayCourse(course, DomApp)
+GetAllCourses(DisplayAllCourses);
+
+function DisplayCourse(course)
 {
+    DomApp = document.getElementById("root");
     const container = document.createElement("div");
     container.setAttribute("class", "container");
     container.style.paddingLeft = "0px";
@@ -19,8 +22,6 @@ function DisplayCourse(course, DomApp)
     
     const editDiv = document.createElement("div");
     editDiv.setAttribute("class", "d-flex flex-column flex-md-row align-items-center bg-white");
-
-    //#region buttons
     // const editbtn = document.createElement("button");
     // editbtn.setAttribute("class", "btn btn-outline-secondary d-flex mr-2 author");
     // editbtn.setAttribute("data-toggle", "modal");
@@ -77,8 +78,10 @@ function DisplayCourse(course, DomApp)
     const author_p = document.createElement("p");
     author_p.textContent = "by ";
     const author_a = document.createElement("a");
-    author_a.textContent = course.author.name;
-    author_a.href = "user/"+course.author.id;
+    GetAuthorByCourseId(course.id, function(author){
+        author_a.textContent = author.name;
+        author_a.href = "user/"+author.id;
+    })
     author_p.appendChild(author_a);
     subject_h5.appendChild(author_p);
 
@@ -89,8 +92,25 @@ function DisplayCourse(course, DomApp)
     card.appendChild(content_p);
     container.appendChild(card);
 }
-// Refactoring : take DOM out and make it a new function
-void function DisplayAllCourses()
+
+function DisplayAllCourses(courses){
+    courses.forEach(c => DisplayCourse(c));
+}
+
+function GetAuthorByCourseId(courseId, callback){
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET","course/GetAuthor/" + courseId)
+    xhr.onload = function(){
+        var result = JSON.parse(this.response);
+        if(xhr.status === 200){
+            //console.log(result);
+            callback(JSON.parse(this.response));
+        }
+    }
+    xhr.send();
+}
+
+function GetAllCourses(callback)
 {
     var DomApp = document.getElementById("root");
     let xhr = new XMLHttpRequest();
@@ -103,15 +123,13 @@ void function DisplayAllCourses()
         {
             if(xhr.status === 200)
             {
-                data.forEach(course => {
-                    DisplayCourse(course, DomApp);
-               });
+                callback(data);
             }
            else console.log("error!");
         }
     };
     xhr.send();
-}();
+};
 
 function ModalEdit(id, title, subject, info, autID)
 {
@@ -142,24 +160,11 @@ function ModalEdit(id, title, subject, info, autID)
     };
 }
 
-function DeleteCourse(id)
-{
-    let xhr = new XMLHttpRequest();
-    xhr.open("DELETE", uri + id, true);
-    xhr.send();
-    location.reload(true);
-    console.log("Course with id = ", id, " deleted!");
-}
-
 function AddNewCourse()
 {
     let title = document.getElementById("new-title").value;
     let subject = document.getElementById("new-subject").value;
     let info = document.getElementById("content-course").value;
-
-    console.log(title);
-    console.log(subject);
-    console.log(info);
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", uri, true);
@@ -182,16 +187,50 @@ function SubscribeCourse(id)
     console.log("Course with id = ", id, " deleted!");
 }
 
-function SetLogBtn(role)
+function GetCurrentUser(callback){
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "Account/GetCurrentUser", true);
+    xhr.onload = function(){
+        if(xhr.status === 200){
+            console.log(JSON.parse(this.response));
+            callback(JSON.parse(this.response));
+        }
+    }
+    xhr.send();
+}
+
+function SetUiBasedOnRole(role)
 {
     let btnLog = document.getElementById("btnLog");
+    let btnPublish = document.getElementById("btnPublish");
+
+    btnLog.style.cursor = "pointer";
+    btnPublish.style.cursor = "pointer";
+    console.log(role);
     if(role != ""){
         btnLog.setAttribute("class", "btn btn-outline-secondary");
         btnLog.setAttribute("data-target", "#");
-        btnLog.textContent = "Log out";
+        GetCurrentUser(function(user){
+            btnLog.textContent = user.name;
+            btnLog.onmouseenter = function(){
+                btnLog.textContent = "Log out";
+            }
+            btnLog.onmouseleave = function(){
+                btnLog.textContent = user.name;
+            }
+        })
         btnLog.onclick = () => {
             Logout();
             location.reload();
+        }
+        if(role == "Student"){
+            
+        }
+        else if(role == "Author"){
+            btnPublish.setAttribute("Class", "btn btn-outline-success mr-2 author");
+            btnPublish.setAttribute("data-target", "#publish");
+            btnPublish.setAttribute("data-toggle", "modal");
+            btnPublish.textContent = "Publish";
         }
     }
     else{
@@ -202,18 +241,20 @@ function SetLogBtn(role)
     }
 }
 
-IsUserAuthenticated(SetLogBtn);
-
+IsUserAuthenticated(SetUiBasedOnRole);
 function IsUserAuthenticated(callback)
 {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "Account/IsAuthenticated", true);
     xhr.onload = function(){
         let msg = JSON.parse(this.responseText);
-        if(msg.error == "" && msg.role.length == 1){
-            callback(msg.role[0]);
+        console.log(msg);
+        if(msg.message !== null){
+            console.log(msg.message[0]);
+            callback(msg.message[0]);
         }
         else {
+            console.log(msg.error);
             callback("");
         }
     }
@@ -233,7 +274,7 @@ function Login()
         if(xhr.responseText !== "")
         {
             let msg = JSON.parse(xhr.responseText);
-            if(typeof msg.error !== "undefined"){
+            if(msg.error !== null){
                 console.log(msg.error);
                 let errorDiv = document.getElementById("errorDisplayDiv");
                 errorDiv.innerHTML = "";

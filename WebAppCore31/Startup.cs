@@ -55,9 +55,9 @@ namespace WebAppCore31
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "SimpleWebApp";
-                options.LoginPath = "/";
+                options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/";
-                options.LogoutPath = "/";
+                options.LogoutPath = "/Account/Logout";
                 options.Events.OnRedirectToLogin = context =>
                 {
                     context.Response.StatusCode = 401;
@@ -92,7 +92,6 @@ namespace WebAppCore31
             app.UseStaticFiles();
             app.UseEndpoints(endpoints =>
             {
-                // Map endpoint to the controller
                 endpoints.MapControllers();
             });
         }

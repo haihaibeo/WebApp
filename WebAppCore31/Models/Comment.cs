@@ -16,7 +16,7 @@ namespace WebAppCore31
         public string CommentString { get; set; }
 
         [Required]
-        public string StudentId { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         public string CourseId { get; set; }
@@ -25,9 +25,9 @@ namespace WebAppCore31
         public DateTime DateTime { get; set; }
 
         [ForeignKey(nameof(CourseId))]
-        public virtual Course Course { get; set; }
+        public Course Course { get; set; }
 
-        [ForeignKey(nameof(StudentId))]
-        public virtual Student Student { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; }
     }
 }

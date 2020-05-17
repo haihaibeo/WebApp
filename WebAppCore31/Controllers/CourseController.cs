@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WebAppCore31.Controllers
 {
@@ -17,6 +18,9 @@ namespace WebAppCore31.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RegisterContext _context;
 
+        private const string author = "Author";
+        private const string student = "Student";
+
         public CourseController(UserManager<User> userManager, RegisterContext context)
         {
             _userManager = userManager;
@@ -26,7 +30,7 @@ namespace WebAppCore31.Controllers
         [HttpGet]
         public IEnumerable<Course> GetAllCourses()
         {
-            return _context.Courses.Include(c => c.Author).ToList();
+            return _context.Courses.ToList();
         }
 
         //[Route("course/{id}")]
@@ -58,28 +62,72 @@ namespace WebAppCore31.Controllers
             return Ok(courses);
         }
 
+        [HttpGet("GetAuthor/{courseId}")]
+        public async Task<IActionResult> GetAuthorByCourseId([FromRoute]string courseId)
+        {
+            var course = await _context.Courses.SingleOrDefaultAsync(c => c.Id == courseId);
+            if (course != null)
+            {
+                var author = new UserModel(await _context.Users.SingleOrDefaultAsync(u => u.Id == course.AuthorId));
+                return Ok(author);
+            }
+            else return Ok(new ReturnMessage(msg: null, error: "Course doesn't exist"));
+        }
+
         [HttpDelete("{courseId}")]
-        [Authorize(Roles = "Author")]
+        [Authorize(Roles = author)]
         public async Task<IActionResult> DeleteCourse([FromRoute]string courseId)
         {
             if (ModelState.IsValid != true)
-            {
                 return BadRequest();
-            }
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var course = await _context.Courses.FindAsync(courseId);
-            if (course.AuthorId == user.Id)
+
+            var course = await _context.Courses.SingleOrDefaultAsync(c => c.Id == courseId);
+            if (course == null) return NotFound();
+
+            //--Delete Comment--//
+            var comments = _context.Comments.ToList().FindAll(c => c.CourseId == course.Id);
+            _context.Comments.RemoveRange(comments);
+
+            //--Delete StudentCourse--//
+            var studCourses = _context.StudentCourses.ToList().FindAll(sc => sc.CourseId == course.Id);
+            _context.StudentCourses.RemoveRange(studCourses);
+
+            _context.Courses.Remove(course);
+
+            var result = await _context.SaveChangesAsync();
+            return Ok(new ReturnMessage("Deleted", null));
+        }
+
+        [HttpPut("{courseId}")]
+        [Authorize(Roles = author)]
+        public async Task<IActionResult> EditCourse([FromRoute]string courseId, [FromBody] Course new_course)
+        {
+            if(ModelState.IsValid == false)
             {
-                _context.Courses.Remove(course);
-                //await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(GetAllCourses));
+                return BadRequest(ModelState);
             }
-            return BadRequest();
+
+            var course = await _context.Courses.SingleOrDefaultAsync(c => c.Id == courseId);
+
+            if (course != null)
+            {
+                var author = await _userManager.GetUserAsync(HttpContext.User);
+                if (course.AuthorId != author.Id)
+                    return BadRequest();
+
+                course.Title = new_course.Title;
+                course.Subject = new_course.Subject;
+                course.ContentCourse = new_course.ContentCourse;
+                _context.Courses.Update(course);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else return NotFound();
         }
 
         [HttpPost]
-        [Authorize(Roles = "Author")]
-        public async Task<IActionResult> CreateCourse([FromBody] Course course)
+        [Authorize(Roles = author)]
+        public async Task<IActionResult> CreateCourse([FromBody]Course course)
         {
             if (ModelState.IsValid == true)
             {
@@ -97,11 +145,11 @@ namespace WebAppCore31.Controllers
         }
 
         [HttpPost("subscribe/{courseId}")]
-        [Authorize(Roles = "Student")]
+        [Authorize(Roles = student)]
         public async Task<IActionResult> Subscribe([FromRoute]string courseId)
         {
             if (ModelState.IsValid != true)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
@@ -112,21 +160,38 @@ namespace WebAppCore31.Controllers
             foreach (var item in _context.StudentCourses)
             {
                 if(item.CourseId == courseId && item.StudentId == user.Id)
-                {
-                    var msg = new
-                    {
-                        error = "Course is already registered by the user!"
-                    };
-                    return Ok(msg);
-                }
+                    return Ok(new ReturnMessage(msg: null, error: "Course is already registered by the user!"));
             }
+
             await _context.StudentCourses.AddAsync(studcourse);
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(new ReturnMessage(msg: "Subscribed successfully !", error:null));
+        }
+
+        [HttpDelete("Unsubscribe/{courseId}")]
+        [Authorize(Roles = student)]
+        public async Task<IActionResult> Unsubscribe([FromRoute]string courseId)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var stud = await _userManager.GetUserAsync(HttpContext.User);
+            if(stud != null)
+            {
+                var studCourse = await _context.StudentCourses.SingleOrDefaultAsync(sc => sc.CourseId == courseId && sc.StudentId == stud.Id);
+                if (studCourse != null)
+                {
+                    _context.StudentCourses.Remove(studCourse);
+                    await _context.SaveChangesAsync();
+                    return Ok(new ReturnMessage("Unscubscribed!", null));
+                }
+                else return Ok(new ReturnMessage(null, "Error"));
+            }
+            return Ok(new ReturnMessage(null, "User not found"));
         }
 
         [HttpGet("IsSubscribed/{courseId}")]
-        [Authorize(Roles ="Student")]
+        [Authorize(Roles = student)]
         public async Task<IActionResult> IsSubscribed([FromRoute]string courseId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -136,12 +201,12 @@ namespace WebAppCore31.Controllers
                 var studCourse = await _context.StudentCourses.SingleOrDefaultAsync(sc => sc.StudentId == user.Id && sc.CourseId == course.Id);
                 if(studCourse != null)
                 {
-                    var msg = new ReturnMessage(true, null);
+                    var msg = new ReturnMessage(msg: true, error: null);
                     return Ok(msg);
                 }
                 else
                 {
-                    var msg = new ReturnMessage(false, null);
+                    var msg = new ReturnMessage(msg: false, error: null);
                     return Ok(msg);
                 }
             }
@@ -150,6 +215,23 @@ namespace WebAppCore31.Controllers
                 var msg = new ReturnMessage(null, "Course not existed");
                 return Ok(msg);
             }
+        }
+
+        [HttpGet("CanAuthorEditCourse/{courseId}")]
+        [Authorize(Roles = author)]
+        public async Task<IActionResult> CanAuthorEditCourseById([FromRoute]string courseId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var course = await _context.Courses.SingleOrDefaultAsync(c => c.Id == courseId);
+            if (user != null && course != null)
+            {
+                if (course.AuthorId == user.Id)
+                    return Ok(new ReturnMessage(msg: true, error: null));
+                else return Ok(new ReturnMessage(msg: false, error: null));
+            }
+            else if (user == null) return Ok(new ReturnMessage(msg: null, error: "User not found"));
+            else if (course == null) return Ok(new ReturnMessage(msg: null, error: "Course not found"));
+            return Ok(new ReturnMessage(null, "Unexpected error"));
         }
     }
 }
