@@ -1,7 +1,28 @@
-﻿//import * as module from "/JS/resource.js";
-const uri = "/course/";
+﻿$(document).ready(function () {
+    GetAllCourses(function(courses){
+        courses.forEach(c => DisplayCourse(c));
+    });
+    IsUserAuthenticated(SetUiBasedOnRole);
 
-GetAllCourses(DisplayAllCourses);
+    $("#btnSearch").click(function() {
+        var searchTerm = $("#inputSearch").val();
+        if (searchTerm !== "") {
+            $("#root").empty();
+            FindCourses(searchTerm);
+        }
+    })
+})
+
+function FindCourses(searchTerm) {
+    let foundCourses = [];
+    GetAllCourses(function (courses) {
+        courses.forEach(c => {
+            if (c.title.includes(searchTerm)) {
+                DisplayCourse(c);
+            }
+        });
+    });
+}
 
 function DisplayCourse(course)
 {
@@ -22,43 +43,6 @@ function DisplayCourse(course)
     
     const editDiv = document.createElement("div");
     editDiv.setAttribute("class", "d-flex flex-column flex-md-row align-items-center bg-white");
-    // const editbtn = document.createElement("button");
-    // editbtn.setAttribute("class", "btn btn-outline-secondary d-flex mr-2 author");
-    // editbtn.setAttribute("data-toggle", "modal");
-    // editbtn.setAttribute("data-target", "#modal-edit");
-    // editbtn.textContent = "Edit";
-    // editbtn.onclick = (event) =>
-    // {
-    //     ModalEdit(course.id, course.title, course.subject, course.contentCourse, course.authorID);
-    // };
-    
-    // const delbtn = document.createElement("button");
-    // delbtn.setAttribute("class", " btn btn-outline-danger d-flex mr-2 author");
-    // delbtn.textContent = "Delete";
-    // delbtn.style.margin = "2";
-    // delbtn.onclick = (event) =>
-    // {
-    //     var cnfm = confirm("Confirm delete?");
-    //     if(cnfm == true)
-    //     {
-    //         DeleteCourse(course.id);
-    //         alert("Course deleted!");
-    //     }
-    //     else console.log("Canceled");
-    // };  
-
-    // const subscribebtn = document.createElement("button");
-    // subscribebtn.setAttribute("class", " btn btn-outline-primary d-flex justify-content-end student");
-    // subscribebtn.textContent = "Subscribe";
-    // subscribebtn.style.margin = "2";
-    // subscribebtn.onclick = (event) =>{
-    //     var cnfm = confirm("Subscribe?");
-    //     if(cnfm == true)
-    //     {
-    //         SubscribeCourse(course.id);
-    //     }
-    // }
-    //#endregion
     
     const title_h2 = document.createElement("h2");
     title_h2.setAttribute("class", "mb-0 mr-md-auto");
@@ -93,10 +77,6 @@ function DisplayCourse(course)
     container.appendChild(card);
 }
 
-function DisplayAllCourses(courses){
-    courses.forEach(c => DisplayCourse(c));
-}
-
 function GetAuthorByCourseId(courseId, callback){
     let xhr = new XMLHttpRequest();
     xhr.open("GET","course/GetAuthor/" + courseId)
@@ -112,9 +92,8 @@ function GetAuthorByCourseId(courseId, callback){
 
 function GetAllCourses(callback)
 {
-    var DomApp = document.getElementById("root");
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", uri, true); // true : asynchronous, false : deprecated
+    xhr.open("GET", "course", true); // true : asynchronous, false : deprecated
     
     xhr.onload = function()
     {
@@ -148,7 +127,7 @@ function ModalEdit(id, title, subject, info, autID)
         if(cnf == true)
         {
             let xhr = new XMLHttpRequest();
-            xhr.open("PUT", uri+id, true);
+            xhr.open("PUT", "/course/" + id, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhr.send(JSON.stringify({
                 "subject" : editSubject.value,
@@ -167,24 +146,20 @@ function AddNewCourse()
     let info = document.getElementById("content-course").value;
 
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", uri, true);
+    xhr.open("POST", "course", true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.onload = () => {
+        var res = JSON.parse(xhr.response);
+        if (res.error === null) {
+            alert(res.message);
+            location.reload();
+        }
+    }
     xhr.send(JSON.stringify({
         "Subject" : subject,
         "Title" : title,
         "ContentCourse" : info
     }));
-
-    location.reload();
-}
-
-function SubscribeCourse(id)
-{
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", uri + "subscribe/" + id, true);
-    xhr.send();
-    location.reload(true);
-    console.log("Course with id = ", id, " deleted!");
 }
 
 function GetCurrentUser(callback){
@@ -206,7 +181,6 @@ function SetUiBasedOnRole(role)
 
     btnLog.style.cursor = "pointer";
     btnPublish.style.cursor = "pointer";
-    console.log(role);
     if(role != ""){
         btnLog.setAttribute("class", "btn btn-outline-secondary");
         btnLog.setAttribute("data-target", "#");
@@ -221,7 +195,6 @@ function SetUiBasedOnRole(role)
         })
         btnLog.onclick = () => {
             Logout();
-            location.reload();
         }
         if(role == "Student"){
             
@@ -241,7 +214,6 @@ function SetUiBasedOnRole(role)
     }
 }
 
-IsUserAuthenticated(SetUiBasedOnRole);
 function IsUserAuthenticated(callback)
 {
     let xhr = new XMLHttpRequest();
@@ -302,9 +274,12 @@ function Logout()
 {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "Account/Logout", true);
-    xhr.onload = function(){
-        var msg = JSON.parse(this.responseText);
-        console.log(msg);
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.response);
+        if (res.error === null) {
+            alert(res.message);
+            location.reload();
+        }
     }
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send();
@@ -353,3 +328,4 @@ function Register()
         "Role" : role
     }));
 }
+

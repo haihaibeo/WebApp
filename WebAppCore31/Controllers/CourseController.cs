@@ -24,7 +24,7 @@ namespace WebAppCore31.Controllers
         public CourseController(UserManager<User> userManager, RegisterContext context)
         {
             _userManager = userManager;
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
@@ -138,8 +138,8 @@ namespace WebAppCore31.Controllers
                     course.AuthorId = user.Id;
                     await _context.Courses.AddAsync(course);
                     await _context.SaveChangesAsync();
-                }
-                return Ok();
+                }   
+                return Ok(new ReturnMessage(msg: "Successful!", null));
             }
             else return BadRequest();
         }

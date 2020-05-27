@@ -29,6 +29,7 @@ namespace WebAppCore31
                 return BadRequest();
 
             var result = await context.Comments.Where(c => c.CourseId == courseId).ToListAsync();
+            result = result.OrderByDescending(c => c.DateTime).ToList();
             var comments = new List<CommentModel>();
             foreach(var item in result)
                 comments.Add(new CommentModel(item));

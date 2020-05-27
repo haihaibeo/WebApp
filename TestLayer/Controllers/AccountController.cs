@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL.DataContext;
+using DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
-namespace WebAppCore31.Controllers
+namespace TestLayer.Controllers
 {
     [Produces("application/json")]
     public class AccountController : Controller

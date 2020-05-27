@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace WebAppCore31
+namespace DAL.Entities
 {
     public class User : IdentityUser
     {

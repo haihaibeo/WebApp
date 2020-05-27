@@ -18,12 +18,12 @@ namespace WebAppCore31
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -49,9 +49,12 @@ namespace WebAppCore31
                 options.User.RequireUniqueEmail = true;
             });
 
-            // Add controller to the 
+            // Avoid object loop when called by API
             services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            // setup cookies
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "SimpleWebApp";

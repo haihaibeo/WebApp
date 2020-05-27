@@ -141,6 +141,7 @@ function DisplayCourse(course, role)
     card.appendChild(content_p);
     container.appendChild(card);
 };
+
 function GetCourseById(callback, role)
 {
     let DomApp = document.getElementById("root");
