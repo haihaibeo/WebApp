@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class UserModel
+    public class UserDTO
     {
-        public UserModel(User user)
+        public UserDTO(User user)
         {
             Id = user.Id;
             Name = user.Name;

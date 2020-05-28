@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class LoginVM
+    public class LoginDTO
     {
         [Required]
         [DataType(DataType.EmailAddress)]

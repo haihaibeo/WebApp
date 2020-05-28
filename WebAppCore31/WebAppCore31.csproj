@@ -5,27 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
+    <Compile Remove="Entities\**" />
     <Compile Remove="Repository\**" />
-    <Content Remove="Models\**" />
+    <Content Remove="Entities\**" />
     <Content Remove="Repository\**" />
-    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Entities\**" />
     <EmbeddedResource Remove="Repository\**" />
-    <None Remove="Models\**" />
+    <None Remove="Entities\**" />
     <None Remove="Repository\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models\Author.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Models\Course.cs" />
-    <Compile Include="Models\DesignTimeDbContextFactory.cs" />
-    <Compile Include="Models\LoginVM.cs" />
-    <Compile Include="Models\RegisterVM.cs" />
-    <Compile Include="Models\ReturnMessage.cs" />
-    <Compile Include="Models\Student.cs" />
-    <Compile Include="Models\StudentCourse.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Entities\Author.cs" />
+    <Compile Include="Entities\Comment.cs" />
+    <Compile Include="Entities\Course.cs" />
+    <Compile Include="Entities\DesignTimeDbContextFactory.cs" />
+    <Compile Include="Entities\ReturnMessage.cs" />
+    <Compile Include="Entities\Student.cs" />
+    <Compile Include="Entities\StudentCourse.cs" />
+    <Compile Include="Entities\User.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="wwwroot\CSS\" />
   </ItemGroup>
 

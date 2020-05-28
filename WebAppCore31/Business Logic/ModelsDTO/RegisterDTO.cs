@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class RegisterVM
+    public class RegisterDTO
     {
         [Required]
         public string FullName { get; set; }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class StudentModel : UserModel
+    public class StudentDTO : UserDTO
     {
-        public StudentModel(Student student) : base(student)
+        public StudentDTO(Student student) : base(student)
         {
             UniYear = student.UniYear;
         }

@@ -62,10 +62,9 @@ function DisplayCourse(course)
     const author_p = document.createElement("p");
     author_p.textContent = "by ";
     const author_a = document.createElement("a");
-    GetAuthorByCourseId(course.id, function(author){
-        author_a.textContent = author.name;
-        author_a.href = "user/"+author.id;
-    })
+    author_a.textContent = course.authorName;
+    author_a.href = "user/" + course.AuthorId;
+    
     author_p.appendChild(author_a);
     subject_h5.appendChild(author_p);
 
@@ -194,7 +193,12 @@ function SetUiBasedOnRole(role)
             }
         })
         btnLog.onclick = () => {
-            Logout();
+            Logout(function (res) {
+                if (res === true)
+                {
+                    location.reload();
+                }
+            })
         }
         if(role == "Student"){
             
@@ -270,15 +274,14 @@ function Login()
     }));
 }
 
-function Logout()
+function Logout(callback)
 {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "Account/Logout", true);
     xhr.onload = function () {
         var res = JSON.parse(xhr.response);
         if (res.error === null) {
-            alert(res.message);
-            location.reload();
+            callback(true);
         }
     }
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

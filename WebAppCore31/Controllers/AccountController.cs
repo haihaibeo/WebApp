@@ -7,23 +7,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using WebAppCore31.Interfaces;
+using WebAppCore31.Logic;
 
 namespace WebAppCore31.Controllers
 {
     [Produces("application/json")]
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly RegisterContext _context;
-
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, RegisterContext context)
+        private readonly IUserLogic logic;
+        public AccountController(IUserLogic logic)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _context = context;
+            this.logic = logic;
         }
 
         /// <summary>
@@ -33,66 +28,43 @@ namespace WebAppCore31.Controllers
         /// <returns>ReturnMessage</returns>
         [HttpPost]
         [Route("Account/Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterVM reg)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO reg)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest();
+            try
             {
-                User user;
-                if (reg.Role == "Student")
-                    user = new Student();
-                else if (reg.Role == "Author")
-                    user = new Author();
-                else return Ok(new ReturnMessage(msg: "Unsuccessfully register!", error: "Invalid role!"));
+                if (reg.Role != "Student" && reg.Role != "Author")
+                    return Ok(new ReturnMessage(msg: "Unsuccessfully register!", error: "Invalid role!"));
 
-                user.Name = reg.FullName;
-                user.Email = reg.Email;
-                user.DateOfBirth = reg.DateOfBirth;
-                user.UserName = reg.Email;
-
-                var result = await _userManager.CreateAsync(user, reg.Password);
-                if (result.Succeeded)
-                {
-                    var resultRole = await _userManager.AddToRoleAsync(user, reg.Role);
-                    await _signInManager.SignInAsync(user, reg.RememberMe);
-                    var msg = new
-                    {
-                        message = $"User {reg.FullName} registered!"
-                    };
-                    return Ok(msg);
-                }
+                var result = await logic.RegisterAsync(reg);
+                if (result == true)
+                    return Ok(new ReturnMessage($"User {reg.FullName} registered!", null));
                 else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
                     return Ok(new ReturnMessage(msg: "User not added!", error: ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
-                }
             }
-            else return Ok(new ReturnMessage(msg: "Неверные входные данные.", error: ModelState.Values.SelectMany(e =>
-                    e.Errors.Select(er => er.ErrorMessage))));
+            catch
+            {
+                return Ok(new ReturnMessage(null, "Unexpected error!"));
+            }
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("Account/Login")]
-        public async Task<IActionResult> Login([FromBody]LoginVM login)
+        public async Task<IActionResult> Login([FromBody]LoginDTO login)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await logic.PasswordSignAsync(login);
+            if (result.Succeeded)
+                return Ok(new ReturnMessage(msg: "Logged in successfully", error: null));
+            else
             {
-                var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent: login.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                    return Ok(new ReturnMessage(msg: "Logged in successfully", error: null));
-                else
-                {
-                    ModelState.AddModelError("", "Wrong combination of login and password!");
-                    return Ok(new ReturnMessage("Error logging in", error: ModelState.Values.SelectMany(e => e.Errors.Select(e => e.ErrorMessage))));
-                }
+                ModelState.AddModelError("", "Wrong combination of login and password!");
+                return Ok(new ReturnMessage("Error logging in", error: ModelState.Values.SelectMany(e => e.Errors.Select(e => e.ErrorMessage))));
             }
-            else return Ok(new ReturnMessage(
-                msg: "Error logging in",
-                error: ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage)))
-                );
         }
 
         [HttpPost]
@@ -100,7 +72,7 @@ namespace WebAppCore31.Controllers
         [Route("Account/Logout")]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await logic.SignOutAsync();
             return Ok(new ReturnMessage("Signed out!", null));
         }
 
@@ -109,12 +81,11 @@ namespace WebAppCore31.Controllers
         [Route("Account/IsAuthenticated")]
         public async Task<IActionResult> GetCurrentUserRoleAsync()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (user == null)
+            var role = await logic.GetCurrentUserRoleAsync(HttpContext.User);
+            if (role == null)
                 return Ok(new ReturnMessage(null, "User not logged in!"));
             else
             {
-                var role = await _userManager.GetRolesAsync(user);
                 return Ok(new ReturnMessage(msg: role, null));
             }
         }
@@ -123,9 +94,9 @@ namespace WebAppCore31.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUserAsync()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await logic.GetCurrentUserAsync(HttpContext.User);
             if (user != null)
-                return Ok(new UserModel(user));
+                return Ok(user);
             return BadRequest();
         }
 
@@ -136,12 +107,11 @@ namespace WebAppCore31.Controllers
         {
             if (ModelState.IsValid == false)
                 return BadRequest();
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+
+            var user = await logic.GetUserByIdAsync(userId);
             if (user != null)
-            {
-                return Ok(new UserModel(user));
-            }
-            else return Ok(new ReturnMessage(null, "User not found"));
+                return Ok(user);
+            return Ok(new ReturnMessage(null, "User not found"));
         }
 
         [HttpGet]

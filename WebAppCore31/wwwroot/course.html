@@ -29,12 +29,6 @@
                             </span>
                         </a>
                     </li>
-                    <li>
-                        <form class="form-inline my-2 my-lg-0 mr-auto">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                        </form>
-                    </li>
                 </ul>
                 <div id="btnPublish"></div>
                 <div id="btnLog"></div>
@@ -55,9 +49,10 @@
                         <div class="panel-body clearfix">
                             <form>
                                 <textarea id="text-comment" class="form-control" placeholder="Write a comment..." rows="3" required></textarea>
-                                <div id="error-div-comment"></div>
+                                <div id="error-div-comment" class="text-danger"></div>
                                 <br>
                                 <button type="submit" class="btn btn-info float-right" onclick="PostComment()">Post</button>
+                                <br>
                             </form>
                         </div>
                         <hr>

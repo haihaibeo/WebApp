@@ -13,6 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using WebAppCore31.Interfaces;
+using WebAppCore31.Logic;
+using WebAppCore31.Repositories;
 
 namespace WebAppCore31
 {
@@ -32,9 +35,15 @@ namespace WebAppCore31
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<RegisterContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IDatabaseRepository, DbRepo>();
+            services.AddScoped<ICourseLogic, CourseLogic>();
+            services.AddScoped<ICommentLogic, CommentLogic>();
+            services.AddScoped<IUserLogic, UserLogic>();
 
             services.Configure<IdentityOptions>(options =>
             {

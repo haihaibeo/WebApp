@@ -17,6 +17,7 @@ function GetUserById(userId, callback){
 function DisplayCourse(course, role)
 {
     //#region button
+    console.log(course);
     console.log("Role in this Dom is" + role);
     var DomApp = document.getElementById("root");
     const container = document.createElement("div");
@@ -200,8 +201,11 @@ function SetUiBasedOnRole(role)
         });
 
         btnLog.onclick = () => {
-            Logout();
-            window.location.reload();
+            Logout(function (res) {
+                if (res === true) {
+                    location.reload();
+                }
+            })
         }
         if(role == "Student"){
             btnPublish.hidden = true;
@@ -285,8 +289,8 @@ function GetAuthorByCourseId(callback){
     xhr.onload = function(){
         var result = JSON.parse(this.response);
         if(xhr.status === 200){
-            //console.log(result);
-            callback(JSON.parse(this.response));
+            console.log(result);
+            callback(result);
         }
     }
     xhr.send();
@@ -343,13 +347,14 @@ function Login()
     }));
 }
 
-function Logout()
-{
+function Logout(callback) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "Account/Logout", true);
-    xhr.onload = function(){
-        var msg = JSON.parse(this.responseText);
-        console.log(msg);
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.response);
+        if (res.error === null) {
+            callback(true);
+        }
     }
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send();
@@ -509,13 +514,12 @@ function DisplayErrorPostingComment(status, message)
 
 function PostComment(){
     let comment = document.getElementById("text-comment").value;
-    if(comment != ""){
+    let errorDiv = document.getElementById("error-div-comment");
+    if (comment.replace(/\s+/g, '').length > 0) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/Comment/AddComment", true);
         xhr.onload = function(){
             if(xhr.status === 401){
-                let errorDiv = document.getElementById("error-div-comment");
-                errorDiv.setAttribute("class", "text-danger");
                 errorDiv.textContent = "Please login to add comments!";
             }
             else if(xhr.status === 200){
@@ -528,6 +532,8 @@ function PostComment(){
             "UserId" : "a",
             "CommentString": comment
         }));
+    } else {
+        errorDiv.textContent = "Comment cannot be blank space!";
     }
 }
 

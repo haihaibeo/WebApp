@@ -7,18 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using WebAppCore31.Interfaces;
+using WebAppCore31.Logic;
+using WebAppCore31.ModelsDTO;
 
 namespace WebAppCore31
 {
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly RegisterContext context;
-        private readonly UserManager<User> userManager;
-        public CommentController(RegisterContext context, UserManager<User> userManager)
+        private readonly ICommentLogic logic;
+        public CommentController(ICommentLogic logic)
         {
-            this.context = context;
-            this.userManager = userManager;
+            this.logic = logic;
         }
 
         [HttpGet]
@@ -28,39 +29,19 @@ namespace WebAppCore31
             if (ModelState.IsValid == false)
                 return BadRequest();
 
-            var result = await context.Comments.Where(c => c.CourseId == courseId).ToListAsync();
-            result = result.OrderByDescending(c => c.DateTime).ToList();
-            var comments = new List<CommentModel>();
-            foreach(var item in result)
-                comments.Add(new CommentModel(item));
-
+            var comments = await logic.GetCommentByCourseId(courseId);
             return Ok(comments);
         }
 
         [HttpPost]
         [Authorize]
         [Route("Comment/AddComment")]
-        public async Task<IActionResult> AddComment([FromBody]Comment comment)
+        public async Task<IActionResult> AddComment([FromBody]CommentDTO comment)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(new ReturnMessage(msg: null, error: "Something went wrong!"));
 
-            var user = await userManager.GetUserAsync(this.HttpContext.User);
-
-            var course = context.Courses.SingleOrDefaultAsync(c => c.Id == comment.CourseId);
-            if (course == null)
-                return Ok(new ReturnMessage(msg: null, error: "Course doesn't exist"));
-
-            await context.Comments.AddAsync(
-                new Comment()
-                {
-                    CourseId = comment.CourseId,
-                    CommentString = comment.CommentString,
-                    UserId = user.Id,
-                    DateTime = DateTime.Now
-                });
-            var result = await context.SaveChangesAsync();
-            return Ok();
+            return Ok(await logic.AddComment(comment, HttpContext.User));
         }
     }
 }

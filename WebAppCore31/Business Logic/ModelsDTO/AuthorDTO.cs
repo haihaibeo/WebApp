@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace WebAppCore31
 {
-    public class AuthorModel : UserModel    
+    public class AuthorDTO : UserDTO    
     {
-        public AuthorModel(Author author) : base (author)
+        public AuthorDTO(Author author) : base (author)
         {
 
         }
