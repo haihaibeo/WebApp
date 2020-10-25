@@ -163,7 +163,7 @@ namespace WebAppCore31.Migrations
                     Id = table.Column<string>(nullable: false),
                     Subject = table.Column<string>(maxLength: 50, nullable: true),
                     Title = table.Column<string>(maxLength: 50, nullable: true),
-                    ContentCourse = table.Column<string>(maxLength: 1000, nullable: true),
+                    ContentCourse = table.Column<string>(maxLength: 100000, nullable: true),
                     AuthorId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

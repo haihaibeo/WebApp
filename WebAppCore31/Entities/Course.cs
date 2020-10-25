@@ -23,7 +23,7 @@ namespace WebAppCore31
         [StringLength(50)]
         public string Title { get; set; }
 
-        [StringLength(1000)]
+        [StringLength(100000)]
         public string ContentCourse { get; set; }
 
         public string AuthorId { get; set; }

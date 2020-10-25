@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,17 +23,17 @@ namespace WebAppCore31.Logic
             this.signInManager = signInManager;
         }
 
-        public async Task<ReturnMessage> RegisterAsync(RegisterDTO reg, ModelStateDictionary modelState)
+        public async Task<bool> RegisterAsync(RegisterDTO reg)
         {
             User user;
             if (reg.Role == "Author")
                 user = new Student();
             else if (reg.Role == "Student")
                 user = new Author();
-            else return new ReturnMessage(null, "Invalid role!");
-
+            else return false;
             user.Name = reg.FullName;
             user.Email = reg.Email;
+            user.DateOfBirth = reg.DateOfBirth;
             user.UserName = reg.Email;
 
             var result = await userManager.CreateAsync(user, reg.Password);
@@ -42,13 +41,9 @@ namespace WebAppCore31.Logic
             {
                 await userManager.AddToRoleAsync(user, reg.Role);
                 await SignInAsync(user, reg.RememberMe);
-                return new ReturnMessage($"User {reg.FullName} registered!", null);
+                return true;
             }
-            foreach (var error in result.Errors)
-            {
-                modelState.AddModelError(string.Empty, error.Description);
-            }
-            return new ReturnMessage(msg: "User not added!", error: modelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage)));
+            else return false;
         }
 
         public Task SignInAsync(User user, bool rememberMe)

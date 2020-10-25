@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace DAL.Repositories
 {
@@ -60,5 +62,10 @@ namespace DAL.Repositories
         public IRepository<Comment> Comments => throw new NotImplementedException();
 
         public IRepository<StudentCourse> StudentCourse => throw new NotImplementedException();
+
+        public Task<int> SaveChangesAsync()
+        {
+            return context.SaveChangesAsync();
+        }
     }
 }

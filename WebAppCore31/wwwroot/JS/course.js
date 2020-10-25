@@ -207,18 +207,18 @@ function SetUiBasedOnRole(role)
                 }
             })
         }
-        if(role == "Student"){
-            btnPublish.hidden = true;
+        if (role == "Student") {
+
         }
-        else if(role == "Author"){
-            btnPublish.setAttribute("class", "btn btn-outline-success mr-2 author");
+        else if (role == "Author") {
+            btnPublish.setAttribute("Class", "btn btn-outline-success mr-2");
             btnPublish.setAttribute("data-target", "#publish");
             btnPublish.setAttribute("data-toggle", "modal");
             btnPublish.textContent = "Publish";
             CanAuthorEditThisCourse(DisplayEditCourse);
         }
     }
-    else{
+    else {
         btnLog.setAttribute("class", "btn btn-outline-primary");
         btnLog.setAttribute("data-toggle", "modal")
         btnLog.setAttribute("data-target", "#exampleModal");
@@ -244,13 +244,13 @@ function DisplayEditCourse(canEdit){
     if(canEdit === true){
         var btns = document.querySelectorAll(".author");
         btns.forEach(btn =>{
-            btn.disabled = false
+            btn.disabled = false;
         })
     }
     else if(canEdit === false){
         var btns = document.querySelectorAll(".author");
         btns.forEach(btn =>{
-            btn.disabled = true
+            btn.disabled = true;
         })
     }
 }
@@ -271,8 +271,16 @@ function ModalEdit(id, title, subject, info)
         let cnf = confirm("Confirm edit?");
         if(cnf == true)
         {
+            x += "<img class=\"round\" src=\"images/" + Products[i].product_Name + ".JPG\">";;
             let xhr = new XMLHttpRequest();
             xhr.open("PUT", "/course/" + id, true);
+            xhr.onload = function () {
+                var res = JSON.parse(this.response);
+                if (res.error === null) {
+                    alert(res.message);
+                    window.location.reload();
+                } else alert(res.error);
+            }
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhr.send(JSON.stringify({
                 "Subject" : editSubject.value,
@@ -360,8 +368,7 @@ function Logout(callback) {
     xhr.send();
 }
 
-function Register()
-{
+function Register() {
     let name = document.getElementById("name").value;
     let login = document.getElementById("email").value;
     let password = document.getElementById("password").value;
@@ -372,13 +379,10 @@ function Register()
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/Account/Register", true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function()
-    {
-        if(xhr.responseText !== "")
-        {
-            let msg = JSON.parse(this.responseText)
-            if(typeof msg.error !== "undefined")
-            {
+    xhr.onreadystatechange = function () {
+        if (xhr.responseText !== "") {
+            let msg = JSON.parse(this.responseText);
+            if (msg.error !== null) {
                 let errorDiv = document.getElementById("errorDisplayDiv");
                 errorDiv.innerHTML = "";
                 msg.error.forEach(er => {
@@ -388,7 +392,7 @@ function Register()
                     errorDiv.appendChild(erDiv);
                 })
             }
-            else{
+            else {
                 alert(msg.message);
                 window.location.reload();
             }
@@ -400,7 +404,7 @@ function Register()
         "Password": password,
         "ConfirmPassword": cnfPassword,
         "RememberMe": rememberMe,
-        "Role" : role
+        "Role": role
     }));
 }
 

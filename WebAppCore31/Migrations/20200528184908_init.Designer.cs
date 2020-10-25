@@ -10,7 +10,7 @@ using WebAppCore31;
 namespace WebAppCore31.Migrations
 {
     [DbContext(typeof(RegisterContext))]
-    [Migration("20200527003754_init")]
+    [Migration("20200528184908_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,8 +190,8 @@ namespace WebAppCore31.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ContentCourse")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100000);
 
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(50)")

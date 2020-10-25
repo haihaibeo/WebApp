@@ -22,10 +22,13 @@ namespace WebAppCore31
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    //webBuilder.UseKestrel();
+                    webBuilder.UseUrls("https://localhost:5000/;https://127.0.0.1:1001;https://*:1002;");
                 });
 
         public static IWebHostBuilder CreateWebhostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
             .UseStartup<Startup>();
+            //.UseUrls("https://0.0.0.0:1000", "https://localhost:1000");
     }
 }

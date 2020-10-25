@@ -37,6 +37,12 @@ namespace WebAppCore31.Controllers
             return await logic.GetAllCourse();
         }
 
+        [HttpGet("getNumber")]
+        public async Task<IActionResult> GetNumber()
+        {
+            return Ok(new ReturnMessage(msg: "1", error:"1"));
+        }
+
         //[Route("course/{id}")]
         [HttpGet("{courseId}")]
         public async Task<IActionResult> GetCourseById([FromRoute]string courseId)

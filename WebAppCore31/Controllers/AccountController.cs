@@ -30,22 +30,13 @@ namespace WebAppCore31.Controllers
         [Route("Account/Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO reg)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             try
             {
-                if (reg.Role != "Student" && reg.Role != "Author")
-                    return Ok(new ReturnMessage(msg: "Unsuccessfully register!", error: "Invalid role!"));
-
-                var result = await logic.RegisterAsync(reg);
-                if (result == true)
-                    return Ok(new ReturnMessage($"User {reg.FullName} registered!", null));
-                else
-                    return Ok(new ReturnMessage(msg: "User not added!", error: ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
+                return Ok(await logic.RegisterAsync(reg, ModelState));
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok(new ReturnMessage(null, "Unexpected error!"));
+                return Ok(new ReturnMessage(null, ex.Message));
             }
         }
 

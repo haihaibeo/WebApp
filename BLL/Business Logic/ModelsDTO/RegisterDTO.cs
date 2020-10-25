@@ -12,6 +12,9 @@ namespace WebAppCore31
         public string FullName { get; set; }
 
         [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 

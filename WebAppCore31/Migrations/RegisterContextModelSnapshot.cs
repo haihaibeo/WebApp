@@ -188,8 +188,8 @@ namespace WebAppCore31.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ContentCourse")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100000);
 
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(50)")

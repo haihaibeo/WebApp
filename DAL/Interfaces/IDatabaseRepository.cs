@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.Interfaces
 {
@@ -13,5 +14,7 @@ namespace DAL.Interfaces
         IRepository<Course> Courses { get; }
         IRepository<Comment> Comments { get; }
         IRepository<StudentCourse> StudentCourse { get; }
+
+        Task<int> SaveChangesAsync();
     }
 }

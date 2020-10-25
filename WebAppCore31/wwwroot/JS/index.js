@@ -57,7 +57,12 @@ function DisplayCourse(course)
     subject_h5.textContent = course.subject;
 
     const content_p = document.createElement("p");
-    content_p.textContent = course.contentCourse; 
+    let content = course.contentCourse
+    if (content.length >= 750) {
+        content = content.substring(0, 750);
+        content += "......."
+    }
+    content_p.textContent = content; 
     
     const author_p = document.createElement("p");
     author_p.textContent = "by ";
@@ -304,8 +309,8 @@ function Register()
     {
         if(xhr.responseText !== "")
         {
-            let msg = JSON.parse(this.responseText)
-            if(typeof msg.error !== "undefined")
+            let msg = JSON.parse(this.responseText);
+            if(msg.error !== null)
             {
                 let errorDiv = document.getElementById("errorDisplayDiv");
                 errorDiv.innerHTML = "";
@@ -318,7 +323,7 @@ function Register()
             }
             else{
                 alert(msg.message);
-                location.reload();
+                window.location.reload();
             }
         }
     }
